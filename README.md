@@ -1,5 +1,6 @@
 
 
+
 **Vehicle Detection Project**
 
 The goals / steps of this project are the following:
@@ -21,18 +22,12 @@ The goals / steps of this project are the following:
 [video1]: ./project_video_output.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
-###Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
 ---
-###Writeup / README
+### Histogram of Oriented Gradients (HOG)
 
-####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  [Here](https://github.com/udacity/CarND-Vehicle-Detection/blob/master/writeup_template.md) is a template writeup for this project you can use as a guide and a starting point.  
-
-You're reading it!
-
-###Histogram of Oriented Gradients (HOG)
-
-####1. Explain how (and identify where in your code) you extracted HOG, Color, and Spatial features from the training images.
+#### 1. Explain how (and identify where in your code) you extracted HOG, Color, and Spatial features from the training images.
 
 The code for this step is contained in `second code cell` of the IPython notebook.  
 
@@ -47,7 +42,7 @@ Here is an example using the `YCrCb` color space and HOG parameters of `orientat
 
 ![alt text][image2]
 
-####2. Explain how you settled on your final choice of parameters HOG, Color, and Spatial features.
+#### 2. Explain how you settled on your final choice of parameters HOG, Color, and Spatial features.
 
 I tried various combinations of parameters and settled on below values, since they are shows 99% of accuracy when evaluate with the test images.
 ```
@@ -63,7 +58,7 @@ hog_feat = True
 hist_feat = True
 ```
 
-####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
+#### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 I concatenated three features(HOG, Spatial, Color Histogram) into one array. It has 8,460 features of 17,760 images.
 Then, I divided this combined features into train set(80%, 14,208 images) and test set(20%, 3,552 images), then trained a linear SVM using `sklearn.svm.LinearSVC(),` and normalized with `sklearn.preprocessing.StandardScaler.transform()` in the first cell of the IPython Notebook. As I mentioned above, the accuracy of test images was 99%.
@@ -71,9 +66,9 @@ Then, I divided this combined features into train set(80%, 14,208 images) and te
 Here is a histogram of before and after normalized:
 ![alt text][image2-1]
 
-###Sliding Window Search
+### Sliding Window Search
 
-####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
+#### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
 To searched the features, I slid the windows with three scale factors(1, 1.5, 2). Since small scale factor makes quite small windows, I limited searching region according to the size of scale for processing efficiency. Then by setting parameter `cells_per_step = 2`, each window overlap of 75%. Also, I computed HOG features of the image once then sub-sampled to get all of its overlaying windows so that it improve the processing speed.
 
@@ -87,21 +82,21 @@ Here is an image which shows my searching region with different scaled windows. 
 
 ![alt text][image3]
 
-####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
+#### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
 Ultimately I searched on three scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
 
 ![alt text][image4]
 ---
 
-### Video Implementation
+###  Video Implementation
 
-####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
+#### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
 Here's a [link to my video result](./project_video_output.mp4)
 
 
 
-####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
+#### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
 I recorded the positions of positive detections in each frame of the video. From the positive detections, I created a heatmap and added into the global variable `heatmaps`. Then I calculated mean value of recent 10 heatmaps. then remove the values which are less than 1 by `apply_threshold()`. This reduce number of false positives and make the bounding much smoother.
 
@@ -116,9 +111,9 @@ Here's an example result showing the heatmap from several subsequent images, and
 ![alt text][image5]
 
 
-###Discussion
+### Discussion
 
-####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 1. The project's test video shows clear whether and the road's color is almost same. But it might be difficult to detect vehicles under bad or dark whether,or on the road of irregular colors. So I will first check which color mode(LUV, HSV, YCrCb, HLS, YUY) works well in hard enviornment. Then, augment my training set to have more various condition such as light, shadow, angle, and so on. 
 
